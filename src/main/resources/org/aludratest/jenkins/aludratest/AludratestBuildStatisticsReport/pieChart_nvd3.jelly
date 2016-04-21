@@ -1,0 +1,199 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core">
+	<table style="border: 0">
+		<tr>
+			<td>
+				<div style='text-align: center; font-size: 16px; font-family:"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;'>Current Build</div>
+				<div style="height: 400px; width: 500px">
+					<svg id="chart_pie_current" class="nvd3"></svg>
+				</div>
+			</td>
+			<td>
+				<div style='text-align: center; font-size: 16px; font-family:"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;'>
+					<j:if test="${request.getParameter('compareBuildId') != null}">Build #${it.getBuildNumber(request.getParameter('compareBuildId'))}</j:if>
+				</div>
+				<div style="height: 400px; width: 500px">
+					<svg id="chart_pie_compare" class="nvd3"></svg>
+				</div>
+			</td>
+		</tr>
+	</table>
+	
+	<div style="width: 500px">
+		<table id="chart_pie_datatable" class="display" width="100%"></table>
+	</div>
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.js"></script>
+	<script src="${resURL}/plugin/aludratest/js/nv.d3.min.js"></script>
+	
+	<!-- this replaces the Array.prototype.every method with its original implementation, to replace Prototype.JS implementation,
+	which is incompatible to NVD3 (and does not conform to standards) -->
+	<script src="${resURL}/plugin/aludratest/js/every.polyfill.js"></script>
+	
+	<script type="text/javascript">
+		function generateExecutionPieChart(renderTo, statistics) {
+	   		// series data for pie
+	        var pieData = new Array();
+	        var totalCount = 0;
+	        jQuery.each(statistics.numberOfTestsByStatus, function(key, value) {
+	        	pieData.push({
+	          	name: key,
+	            color: statusColors[key],
+	            y: value
+	          });
+	          totalCount += value;
+	        });
+	        if (statistics.numberOfIgnoredSuccessfulTests > 0) {
+	          pieData.push({
+				name: 'IGNORED_PASSED',
+	            y: statistics.numberOfIgnoredSuccessfulTests,
+	            color: statusColors['IGNORED_PASSED']
+	          });
+	          totalCount += statistics.numberOfIgnoredSuccessfulTests;
+	        }
+	        if (statistics.numberOfIgnoredFailedTests > 0) {
+	          pieData.push({
+				name: 'IGNORED_FAILED',
+	            y: statistics.numberOfIgnoredFailedTests,
+	            color: statusColors['IGNORED_FAILED']
+	          });
+	          totalCount += statistics.numberOfIgnoredFailedTests;
+	        }
+	        
+	        pieData.sort(function(a, b) {
+	        	return expectedStatusOrder.indexOf(a.name) - expectedStatusOrder.indexOf(b.name);  
+	        });
+	        
+        	var chart = nv.models.pieChart()
+        		.x(function(d) { return d.name; })
+        		.y(function(d) { return d.y; })
+        		.showLabels(false)
+        		.showLegend(true);
+        		
+        	chart.legend.columnize(false);
+        	chart.legend.alignAnchor('center');
+        	
+        	chart.valueFormat(function(d, i) {
+        		var percent = totalCount == 0 ? 0 : (d / totalCount) * 100; 
+        		return d.toFixed(0) + " (" + percent.toFixed(2) + "%)"; 
+        	});
+        	
+        	chart.legend.dispatch.on("stateChange.filterList", function() { 
+        		if (typeof(updateTestCaseFilter) === 'function') {
+        			updateTestCaseFilter();
+        		}
+        	});
+        	
+        	// move legend to bottom whenever rendered
+        	chart.dispatch.on("renderEnd.moveLegend", function() { 
+	        	d3.selectAll(".nvd3.nv-pieChart").attr("transform", "translate(20, 0)");
+	        	d3.selectAll(".nvd3.nv-pieChart .nv-legendWrap").attr("transform", "translate(20, 270)");
+        	});
+        	
+	        nv.addGraph(function() {
+	        	// TODO put subtitle somewhere
+	        		
+	        	d3.select('#' + renderTo)
+	        		.datum(pieData)
+	        		.transition().duration(2000)
+	        		.call(chart);
+	        		
+	        	return chart;
+	        });
+	        
+	        
+	        return chart;
+		}
+		
+		function generatePieChartDataTable(compareStatistics) {
+			var tableData = new Array();
+			
+			function buildChangeDescriptionSpan(key, absChange) {
+				var absChangeText = absChange > 0 ? "+" + absChange : absChange;
+				var color = key.endsWith('PASSED') ? (absChange > 0 ? 'green' : 'red') : (absChange &lt; 0 ? 'green' : 'red');
+				
+				if (absChange != 0) {
+       				return "&lt;span style='color: " + color + "'>" + absChangeText + "&lt;/span>";
+       			}
+      			return "-";
+			}
+			
+			function buildDataTableLine(key, currentValue, compareValue) {
+	        	var line = [ key, currentValue ];
+	        	if (typeof(compareValue) !== 'undefined') {
+	        		var absChange = currentValue - compareValue;
+	        		line[2] = buildChangeDescriptionSpan(key, absChange);
+	        	}
+	        	return line;
+			}
+			
+			function valueOrZero(value) {
+				if (typeof(value) === 'undefined') {
+					return 0;
+				}
+				return value;	
+			}
+			
+	        jQuery.each(currentStatistics.numberOfTestsByStatus, function(key, value) {
+	        	if (typeof(compareStatistics) !== 'undefined') {
+	        		tableData.push(buildDataTableLine(key, value, valueOrZero(compareStatistics.numberOfTestsByStatus[key])));
+	        	}
+	        	else {
+	        		tableData.push(buildDataTableLine(key, value));
+	        	}
+	        });
+	        
+	        tableData.sort(function(a, b) { 
+	        	return expectedStatusOrder.indexOf(a[0]) - expectedStatusOrder.indexOf(b[0]);
+	        });
+	        
+	        if (currentStatistics.numberOfIgnoredSuccessfulTests > 0) {
+	        	if (typeof(compareStatistics) !== 'undefined') {
+	        		tableData.push(buildDataTableLine("IGNORED_PASSED", currentStatistics.numberOfIgnoredSuccessfulTests, valueOrZero(compareStatistics.numberOfIgnoredSuccessfulTests)));
+	        	}
+	        	else {
+	        		tableData.push(buildDataTableLine("IGNORED_PASSED", currentStatistics.numberOfIgnoredSuccessfulTests));
+	        	}
+	        }
+	        
+	        if (currentStatistics.numberOfIgnoredFailedTests > 0) {
+	        	if (typeof(compareStatistics) !== 'undefined') {
+	        		tableData.push(buildDataTableLine("IGNORED_FAILED", currentStatistics.numberOfIgnoredFailedTests, valueOrZero(compareStatistics.numberOfIgnoredFailedTests)));
+	        	}
+	        	else {
+	        		tableData.push(buildDataTableLine("IGNORED_FAILED", currentStatistics.numberOfIgnoredFailedTests));
+	        	}
+	        }
+	        
+	        var columns = [
+	        	{ title: "Status", className: "aludratest-center" },
+	        	{ title: "# of test cases", className: "aludratest-center" }
+	        ];
+	        
+	        if (typeof(compareStatistics) !== 'undefined') {
+	        	columns.push({ title: "Change", className: "aludratest-center" });
+	        }
+	        
+	        jQuery('#chart_pie_datatable').DataTable({
+        			data: tableData,
+        			columns: columns,
+        			paging: false,
+        			searching: false,
+        			ordering: false,
+        			info: false
+        	});
+		}
+		
+		jQuery(function() { 
+			window['current_testCases_pieChart'] = generateExecutionPieChart("chart_pie_current", currentStatistics);
+			if (typeof(compareStatistics) !== 'undefined') {
+				generateExecutionPieChart("chart_pie_compare", compareStatistics);
+				generatePieChartDataTable(compareStatistics);
+			}
+			else {
+				generatePieChartDataTable();
+			}
+		});
+
+	</script>
+</j:jelly>

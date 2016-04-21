@@ -1,0 +1,65 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core">
+        <table id="test_cases_table" class="display" width="100%"></table>
+        
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+        <script src="${resURL}/plugin/aludratest/js/testCaseExecutionChart_nvd3.js"></script>
+        
+        <script type="text/javascript">
+        	jQuery(function() { 
+        		var testCaseData = new Array();
+        		
+        		function getValueOrZero(obj, key) {
+        		  var val = obj[key];
+        		  if (typeof(val) === 'undefined') {
+        		  	return 0;
+        		  }
+        		  return val;
+        		}
+        		
+        		jQuery.each(projectStats.testCaseStatistics, function(key, value) { 
+        			var tcd = new Array();
+        			tcd.push(key.replace(/\./g, ". "));
+        			tcd.push(value.executionCount);
+        			tcd.push(value.failureCount);
+        			
+        			// calculate failure rate; ignore ignored
+        			var failureCount = value.failureCount;
+        			jQuery.each(value.results, function(index, status) {
+        				if (status != null &amp;&amp; status.ignored &amp;&amp; status.status !== 'PASSED') {
+        					failureCount--;
+        				}
+        			});
+        			
+        			tcd.push(value.executionCount == 0 ? "-" : (((failureCount / value.executionCount) * 100).toFixed(2) + "%"));
+        			tcd.push(getValueOrZero(value.countPerStatus, 'FAILED'));
+        			tcd.push(getValueOrZero(value.countPerStatus, 'FAILEDPERFORMANCE'));
+        			tcd.push(getValueOrZero(value.countPerStatus, 'FAILEDACCESS'));
+        			tcd.push(getValueOrZero(value.countPerStatus, 'FAILEDAUTOMATION'));
+        			tcd.push(getValueOrZero(value.countPerStatus, 'INCONCLUSIVE'));
+        			var chartOnClick = "showTestCaseExecutionChart('" + key + "')";
+        			tcd.push('&lt;span class="fa fa-area-chart" style="color: #0099ff; cursor: pointer" title="Chart" onclick="' + chartOnClick + '">&lt;/span>');
+        			
+        			testCaseData.push(tcd);
+        		});
+        		
+        		jQuery('#test_cases_table').DataTable( {
+        			data: testCaseData,
+        			lengthMenu: [[50, 100, 500, 1000, -1], [ 50, 100, 500, 1000, "All" ]],
+        			columns: [
+        				{ title: "Test Case" },
+        				{ title: "# executed", className: "aludratest-center" },
+        				{ title: "# failed", className: "aludratest-center" },
+        				{ title: "Failure rate (without ignored)", className: "aludratest-center" },
+        				{ title: "Functional Failure", className: "aludratest-center" },
+        				{ title: "Performance Failure", className: "aludratest-center" },
+        				{ title: "Access Failure", className: "aludratest-center" },
+        				{ title: "Automation Failure", className: "aludratest-center" },
+        				{ title: "Inconclusive Failure", className: "aludratest-center" },
+        				{ title: "Chart", className: "aludratest-center", orderable: false }
+        			]
+        		});
+        	});
+        </script>
+
+</j:jelly>     

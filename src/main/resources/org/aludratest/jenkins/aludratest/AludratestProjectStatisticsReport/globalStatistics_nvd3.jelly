@@ -1,0 +1,124 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core">
+	  <div style='text-align: center; font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif'>
+		<h2 style="font-weight: normal">Test Execution History</h2>
+	  </div>
+	  <div style="height: 400px; width: 95%">
+      	<svg id="chart_global_statistics" class="nvd3"></svg>
+      </div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.js"></script>
+      <script src="${resURL}/plugin/aludratest/js/nv.d3.min.js"></script>
+      
+      <!-- this replaces the Array.prototype.every method with its original implementation, to replace Prototype.JS implementation,
+      which is incompatible to NVD3 (and does not conform to standards) -->
+      <script src="${resURL}/plugin/aludratest/js/every.polyfill.js"></script>
+      
+      <script type="text/javascript">
+jQuery(function() {
+
+	var headerFormatter = function(d) {
+		var result = projectStats.buildLabels[d];
+		var desc = buildDescriptions[projectStats.buildLabels[d]];
+		if (desc !== null &amp;&amp; typeof(desc) !== 'undefined') {
+			result += "&lt;br />&lt;small style='font-weight: normal'>" + desc + "&lt;/small>";
+		}
+		return result;
+	};
+	
+	// convert data array for NVD3
+	var data = new Array();
+	var testStates = ["IGNORED_FAILED", "IGNORED_PASSED", "INCONCLUSIVE", "FAILEDACCESS", "FAILEDPERFORMANCE", "FAILEDAUTOMATION", "FAILED", "PASSED"];
+	jQuery.each(testStates, function(index, key) { 
+		var series = { key: key, values: new Array() };
+	  jQuery.each(projectStats.globalStatistics, function(index2, stat) {
+	  	// special treatment for IGNORED_FAILED and _PASSED (not very elegant, but effective)
+	  	var val;
+	  	if (key === 'IGNORED_FAILED') {
+	  		val = stat.numberOfIgnoredFailedTests;
+	  	}
+	  	else if (key === 'IGNORED_PASSED') {
+	  		val = stat.numberOfIgnoredSuccessfulTests;
+	  	}
+	  	else {
+		    var val =  stat.numberOfTestsByStatus[key];
+		}
+	    if (typeof(val) === 'undefined') {
+	    	val = 0;
+	    }
+	    var ptval = [ index2, val ];
+	  	series.values.push(ptval);
+	  });
+	  data.push(series);
+	});
+	
+	// convert color array for NVD3
+	var seriesColors = new Array();
+	jQuery.each(testStates, function(index, key) { 
+		seriesColors.push(statusColors[key]);
+	});
+	
+	nv.addGraph(function() {
+	    var chart = nv.models.stackedAreaChart()
+	        .x(function(d) { 
+	        	return d[0];
+	        })
+	        .y(function(d) {
+	        	return d[1];
+	        })
+	        .useInteractiveGuideline(true)
+	        .showControls(false)
+	        .clipEdge(true)
+	        .color(seriesColors);
+
+	    chart.xAxis
+	        .tickFormat(function(d) { 
+	          return projectStats.buildLabels[d];
+	    });
+	    
+	    chart.xAxis.axisLabel("Build");
+	    chart.yAxis.axisLabel("Test Cases");
+	    
+	    chart.legend.alignAnchor('center');
+	    chart.legend.reversed(true);
+	    chart.legend.columnize(false);
+	    
+	    chart.interactiveLayer.tooltip.headerFormatter(headerFormatter);
+	    
+	    d3.select('#chart_global_statistics')
+	      .datum(data)
+	      .call(chart);
+	      
+	    // remove default "drill into" behaviour - do it after each render, because it would otherwise
+	    // be restored by chart
+	    chart.legend.dispatch.on("stateChange.removeDefaultToggle", function() {
+	    	chart.stacked.dispatch.on("areaClick.toggle", null); 
+	    });
+	    chart.stacked.dispatch.on("areaClick", function() { 
+	    	chart.stacked.dispatch.on("areaClick.toggle", null);
+	    });
+	    chart.stacked.dispatch.on("areaClick.toggle", null);
+		
+		// register our very own click handler
+		chart.interactiveLayer.dispatch.on('elementClick', function(evt) {
+			var index = Math.round(evt.pointXValue);
+			if (index &lt; 0) {
+				index = 0;
+			}
+			if (index >= projectStats.buildNumbers.length) {
+				index = projectStats.buildNumbers.length - 1;
+			}
+	 	
+			navBean.getBuildUrl(projectStats.buildNumbers[index], function(t) {
+				window.location.href = "${rootURL}/" + t.responseObject(); 
+			});
+  	  	});
+  
+		nv.utils.windowResize(chart.update);
+	    
+	    return chart;
+	  });
+});
+      </script>
+      
+
+</j:jelly>     

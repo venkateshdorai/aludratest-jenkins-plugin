@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.jenkins-ci.plugins</groupId>
+		<artifactId>plugin</artifactId>
+		<version>2.5</version>
+		<relativePath />
+	</parent>
+	<groupId>org.aludratest.jenkins</groupId>
+	<artifactId>aludratest</artifactId>
+	<version>1.0</version>
+	<packaging>hpi</packaging>
+
+	<properties>
+		<jenkins.version>1.650</jenkins.version>
+		<!-- not fully understood why the InjectedTest fails. But this is how we can exclude it. -->
+		<!-- <maven-hpi-plugin.disabledTestInjection>true</maven-hpi-plugin.disabledTestInjection> -->
+	</properties>
+
+	<name>AludraTest Jenkins Plugin</name>
+	<description>AludraTest Plugin for Jenkins, enabling extended AludraTest reporting.</description>
+	<url>https://wiki.jenkins-ci.org/display/JENKINS/aludratest+Plugin</url>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+	<!-- If you want this to appear on the wiki page: -->
+	<developers>
+		<developer>
+			<id>falbrech</id>
+			<name>Florian Albrecht</name>
+			<email>florian.albrecht@aludratest.org</email>
+		</developer>
+	</developers>
+
+	<!-- Assuming you want to host on @jenkinsci: -->
+	<scm>
+		<connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
+		<developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
+		<url>http://github.com/jenkinsci/${project.artifactId}-plugin</url>
+	</scm>
+
+	<repositories>
+		<repository>
+			<id>repo.jenkins-ci.org</id>
+			<url>http://repo.jenkins-ci.org/public/</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>repo.jenkins-ci.org</id>
+			<url>http://repo.jenkins-ci.org/public/</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.jenkins-ci.plugins</groupId>
+			<artifactId>jquery</artifactId>
+			<version>1.11.2-0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>stapler</artifactId>
+					<groupId>org.kohsuke.stapler</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<header>src/license/license-template.txt</header>
+					<properties>
+						<owner>Hamburg Sud and the contributors</owner>
+						<year>2016</year>
+					</properties>
+					<includes>
+						<include>src/main/java/**/*.java</include>
+						<include>src/main/webapp/js/*.js</include>
+						<include>src/main/webapp/css/*.css</include>
+					</includes>
+					<excludes>
+						<exclude>src/main/webapp/css/nv.d3.min.css</exclude>
+						<exclude>src/main/webapp/js/nv.d3.min.js</exclude>
+						<exclude>src/main/webapp/js/every.polyfill.js</exclude>
+					</excludes>
+					<mapping>
+						<java>SLASHSTAR_STYLE</java>
+					</mapping>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<phase>process-sources</phase>
+					</execution>
+	
+				</executions>
+			</plugin>
+		</plugins>
+
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-javadoc-plugin</artifactId>
+										<versionRange>[2.10.1,)</versionRange>
+										<goals>
+											<goal>javadoc</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.jacoco</groupId>
+										<artifactId>jacoco-maven-plugin</artifactId>
+										<versionRange>[0.7.2.201409121644,)</versionRange>
+										<goals>
+											<goal>prepare-agent</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>com.mycila</groupId>
+										<artifactId>license-maven-plugin</artifactId>
+										<versionRange>[2.6,)</versionRange>
+										<goals>
+											<goal>check</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>

@@ -1,0 +1,25 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core">
+
+	<h2>All Test Cases</h2>
+	
+	<div id="testCases_change_filter" style="display: none">
+		Filter change in status:
+		<table id="testCases_change_filter_buttonTable" cellspacing="0" style="border: 0">
+		</table>
+	</div>
+	<table id="testCases_table" class="display" cellspacing="0" style="width: 95%"></table>
+	
+	<script type="text/javascript" src="${resURL}/plugin/aludratest/js/testCaseList.js"></script>
+	<script type="text/javascript">
+		function updateTestCaseFilter() {
+		    // filtering is done by custom method
+			window['testCases_table'].draw();
+		}
+		
+		buildTestCaseTable("${request.getParameter('compareBuildId')}");
+		
+	</script>
+
+
+</j:jelly>

@@ -1,0 +1,52 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:t="/lib/hudson">
+  
+  <l:layout title="AludraTest Execution Statistics" css="/plugin/aludratest/css/aludratest.css">
+    <l:header>
+    	<style type="text/css">
+    		/* Fixes strange outline in chart dialog in Chrome. */
+    		button.ui-dialog-titlebar-close:active, button.ui-dialog-titlebar-close:focus {
+    			outline: none
+    		}
+    	</style>
+    </l:header>
+    
+    <st:include it="${it.project}" page="sidepanel.jelly" />
+    
+    <l:main-panel>
+      <script type="text/javascript" src="https://cdn.datatables.net/t/dt/dt-1.10.11/datatables.min.js"></script>
+      
+      <h1>AludraTest Execution Statistics</h1>
+      <div>
+      	This page shows various statistics about the AludraTest executions of all builds of this job.
+      </div>
+      
+      <script src="${resURL}/plugin/aludratest/js/statusColors.js"></script>
+      <script type="text/javascript">
+	    var navBean = <st:bind value="${it.navBean}"/>;
+    
+        ${it.getDataVars(request.getParameter('fromBuild'), request.getParameter('toBuild'))}
+        
+        function buildSeriesArray(buildStatsCallback) {
+        	var result = new Array();
+        	var i = 0;
+        	jQuery.each(projectStats.globalStatistics, function(index, value) {
+	        	result[i] = buildStatsCallback(value);
+	        	if (typeof(result[i]) === 'undefined') {
+	        		result[i] = 0;
+	        	}
+    			i++;
+        	});
+        	return result;
+        }
+        </script>
+        
+        <st:include page="globalStatistics_nvd3.jelly" class="${it.class}" />
+        
+        <br /><br />
+        <h3>All Test Cases</h3>
+        
+        <st:include page="testCaseList.jelly" class="${it.class}" />
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

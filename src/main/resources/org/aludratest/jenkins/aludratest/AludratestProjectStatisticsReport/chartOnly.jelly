@@ -1,0 +1,44 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+	xmlns:f="/lib/form" xmlns:c="chart">
+	<![CDATA[<!doctype html>]]>
+	
+	<st:contentType value="text/html"/>
+	<!-- this file is used as a direct URL to only display the chart, without table below, and without Jenkins sidebar. -->
+	<d:taglib uri="chart">
+	</d:taglib>
+	
+	<j:set var="resURL"  value="${it.resURL}" />
+	
+	<html>
+	<head>
+		<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+	
+		<script src="${resURL}/plugin/aludratest/js/statusColors.js"></script>
+		<link rel="stylesheet" href="${resURL}/plugin/aludratest/css/aludratest.css" />
+	</head>
+	<body>
+		<st:bind value="${it.navBean}" var="navBean" />
+	
+		<script type="text/javascript">
+			${it.getDataVars(request.getParameter('fromBuild'), request.getParameter('toBuild'))}
+	
+			function buildSeriesArray(buildStatsCallback) {
+				var result = new Array();
+				var i = 0;
+				jQuery.each(allBuildIds, function(index, value) {
+					result[i] = buildStatsCallback(buildStats[value]);
+					if (typeof(result[i]) === 'undefined') {
+						result[i] = 0;
+					}
+					i++;
+				});
+				return result;
+			}
+		</script>
+	
+		<st:include page="globalStatistics_nvd3.jelly" class="${it.class}" />
+		
+	</body>
+	</html>
+</j:jelly>

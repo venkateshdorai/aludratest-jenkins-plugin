@@ -1,0 +1,51 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+  <l:layout title="${it.title}" css="/plugin/aludratest/css/aludratest.css">
+    <st:include it="${it.build}" page="sidepanel.jelly" />
+    <l:main-panel>
+	  <script type="text/javascript" src="https://cdn.datatables.net/t/dt/dt-1.10.11,b-1.1.2,b-html5-1.1.2/datatables.min.js"></script>
+      
+      <script type="text/javascript">
+      	function updateCompareBuildId() {
+      		var compareBuildId = jQuery("#compareBuildId").val();
+      		window.location.search = "?compareBuildId=" + compareBuildId;
+      	}
+      </script>
+      
+      <h1>AludraTest Execution Statistics</h1>
+      <p>
+      	This page shows the statistics of the AludraTest execution of this build, and allows comparison to a previous build.
+      </p>
+      
+      <p>
+	      Compare to Build:&#160;
+	      <select name="compareBuildId" id="compareBuildId">
+	      	<j:forEach var="buildId" items="${it.previousBuildIds}">
+	      		<j:if test="${buildId.equals(request.getParameter('compareBuildId'))}">
+		            <option value="${buildId}" selected="selected">#${it.getBuildNumber(buildId)}</option>
+	      		</j:if>
+	      		<j:if test="${!buildId.equals(request.getParameter('compareBuildId'))}">
+		            <option value="${buildId}">#${it.getBuildNumber(buildId)}</option>
+	      		</j:if>
+	          </j:forEach>
+	      </select>
+	      &#160;
+	      <button onclick="updateCompareBuildId()">Select</button>
+	   </p>
+	   
+	   <script src="${resURL}/plugin/aludratest/js/statusColors.js"></script>
+      
+	   <script type="text/javascript">
+	        var expectedStatusOrder = ['PASSED', 'FAILED', 'FAILEDPERFORMANCE', 'FAILEDACCESS', 'FAILEDAUTOMATION', 'INCONCLUSIVE', 'IGNORED_PASSED', 'IGNORED_FAILED'];
+	   
+	   		${it.generateJsData(request.getParameter("compareBuildId"))}
+	   </script>
+	   
+	   <st:include page="pieChart_nvd3.jelly" class="${it.class}" />
+	   
+	   <br /><br />
+	   <st:include page="testCaseList.jelly" class="${it.class}" />
+    </l:main-panel>
+  </l:layout>
+</j:jelly>
