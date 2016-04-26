@@ -112,3 +112,25 @@ Now, after a new execution of the job, the execution statistics will be gathered
 ## Aggregating multiple projects
 
 -Documentation coming soon-
+
+## URL parameters
+
+You can append `/chartOnly` to the AludraTest Jenkins URLs, e.g. `http://jenkins.acme.int/job/TEST_bigapp/27/aludratest/chartOnly`.
+This displays only:
+
+* The pie chart with test status categories, for the per-build URL
+* The area chart with test status categories over time, for the project URL
+
+This is useful for embedding these charts in dashboards.
+
+Also, you can add some query parameters to the AludraTest per-project URL, e.g. `http://jenkins.acme.int/job/TEST_bigapp/aludratest/?fromBuild=12&toBuild=16`
+
+* `fromBuild`: The build number which should be the first to consider for the AludraTest statistics. If omitted, defaults to the first build of the job with valid AludraTest statistics.  
+If you use a negative number, this will instead display the **last** N builds having valid AludraTest statistics (e.g. `fromBuild=-10`).
+* `toBuild`: The build number which should be the last to consider for the AludraTest statistics. If omitted, defaults to the last build of the job with valid AludraTest statistics. If a negative number is used for `fromBuild`, this parameter is ignored.
+
+You can combine these parameters and the `chartOnly` path part:
+
+`http://jenkins.acme.int/job/TEST_bigapp/aludratest/chartOnly?fromBuild=-10`
+
+Which is **really** cool for dashboards :-)
