@@ -4,8 +4,6 @@
   <l:layout title="${it.title}" css="/plugin/aludratest/css/aludratest.css">
     <st:include it="${it.build}" page="sidepanel.jelly" />
     <l:main-panel>
-	  <script type="text/javascript" src="https://cdn.datatables.net/t/dt/dt-1.10.11,b-1.1.2,b-html5-1.1.2/datatables.min.js"></script>
-      
       <script type="text/javascript">
       	function updateCompareBuildId() {
       		var compareBuildId = jQuery("#compareBuildId").val();
@@ -34,8 +32,6 @@
 	      <button onclick="updateCompareBuildId()">Select</button>
 	   </p>
 	   
-	   <script src="${resURL}/plugin/aludratest/js/statusColors.js"></script>
-      
 	   <script type="text/javascript">
 	        var expectedStatusOrder = ['PASSED', 'FAILED', 'FAILEDPERFORMANCE', 'FAILEDACCESS', 'FAILEDAUTOMATION', 'INCONCLUSIVE', 'IGNORED_PASSED', 'IGNORED_FAILED'];
 	   

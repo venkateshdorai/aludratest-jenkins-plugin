@@ -14,8 +14,6 @@
     <st:include it="${it.project}" page="sidepanel.jelly" />
     
     <l:main-panel>
-      <script type="text/javascript" src="https://cdn.datatables.net/t/dt/dt-1.10.11/datatables.min.js"></script>
-      
       <h1>AludraTest Execution Statistics</h1>
       <div>
       	This page shows various statistics about the AludraTest executions of all builds of this job.

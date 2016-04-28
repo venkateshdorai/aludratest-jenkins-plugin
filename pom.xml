@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>org.aludratest.jenkins</groupId>
 	<artifactId>aludratest</artifactId>
-	<version>1.0</version>
+	<version>1.1-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 
 	<properties>
@@ -58,20 +58,6 @@
 		</pluginRepository>
 	</pluginRepositories>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.jenkins-ci.plugins</groupId>
-			<artifactId>jquery</artifactId>
-			<version>1.11.2-0</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>stapler</artifactId>
-					<groupId>org.kohsuke.stapler</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -90,8 +76,8 @@
 						<include>src/main/webapp/css/*.css</include>
 					</includes>
 					<excludes>
-						<exclude>src/main/webapp/css/nv.d3.min.css</exclude>
-						<exclude>src/main/webapp/js/nv.d3.min.js</exclude>
+						<exclude>src/main/webapp/css/*.min.css</exclude>
+						<exclude>src/main/webapp/js/*.min.js</exclude>
 						<exclude>src/main/webapp/js/every.polyfill.js</exclude>
 					</excludes>
 					<mapping>
@@ -105,8 +91,84 @@
 						</goals>
 						<phase>process-sources</phase>
 					</execution>
-	
 				</executions>
+			</plugin>
+			
+			<!-- download external resources like jQuery, jQuery UI, datatable etc. via webjars -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>download-webresources</id>
+						<phase>generate-resources</phase>
+						<goals><goal>unpack</goal></goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.webjars</groupId>
+									<artifactId>d3js</artifactId>
+									<version>3.5.16</version>
+									<includes>**/d3*.min.js</includes>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.webjars</groupId>
+									<artifactId>jquery</artifactId>
+									<version>1.12.3</version>
+									<includes>**/jquery*.min.js</includes>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.webjars</groupId>
+									<artifactId>jquery-ui</artifactId>
+									<version>1.11.4</version>
+									<includes>**/jquery*.min.js</includes>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>${project.build.directory}/webjars</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- copy downloaded resources to target/external-resources -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-downloaded-js-resources</id>
+						<phase>generate-resources</phase>
+						<goals><goal>copy-resources</goal></goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/external-resources/js</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.build.directory}/webjars/META-INF/resources/webjars/d3js/3.5.16</directory>
+								</resource>
+								<resource>
+									<directory>${project.build.directory}/webjars/META-INF/resources/webjars/jquery/1.12.3</directory>
+								</resource>
+								<resource>
+									<directory>${project.build.directory}/webjars/META-INF/resources/webjars/jquery-ui/1.11.4</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- include downloaded resources in HPI -->
+			<plugin>
+				<groupId>org.jenkins-ci.tools</groupId>
+				<artifactId>maven-hpi-plugin</artifactId>
+				<configuration>
+					<webResources>
+						<webResource>
+							<directory>${project.build.directory}/external-resources</directory>
+							<filtering>false</filtering>
+						</webResource>
+					</webResources>
+				</configuration>
 			</plugin>
 		</plugins>
 
@@ -153,6 +215,19 @@
 										<versionRange>[2.6,)</versionRange>
 										<goals>
 											<goal>check</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[2.10,)</versionRange>
+										<goals>
+											<goal>unpack</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>

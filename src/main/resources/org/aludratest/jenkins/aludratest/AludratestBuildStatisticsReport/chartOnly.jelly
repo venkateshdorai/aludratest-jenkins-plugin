@@ -10,10 +10,6 @@
 	
 	<html>
 	<head>
-		<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
-		<script type="text/javascript" src="https://cdn.datatables.net/t/dt/dt-1.10.11,b-1.1.2,b-html5-1.1.2/datatables.min.js"></script>
-	
-		<script src="${resURL}/plugin/aludratest/js/statusColors.js"></script>
 		<link rel="stylesheet" href="${resURL}/plugin/aludratest/css/aludratest.css" />
 	</head>
 	<body style='font-family:"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;'>

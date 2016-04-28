@@ -6,12 +6,18 @@
 	  <div style="height: 400px; width: 95%">
       	<svg id="chart_global_statistics" class="nvd3"></svg>
       </div>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.js"></script>
+      <script src="${resURL}/plugin/aludratest/js/d3.min.js"></script>
       <script src="${resURL}/plugin/aludratest/js/nv.d3.min.js"></script>
       
       <!-- this replaces the Array.prototype.every method with its original implementation, to replace Prototype.JS implementation,
       which is incompatible to NVD3 (and does not conform to standards) -->
       <script src="${resURL}/plugin/aludratest/js/every.polyfill.js"></script>
+	  <script src="${resURL}/plugin/aludratest/js/jquery.min.js"></script>
+	  <script type="text/javascript">
+	  	jQuery.noConflict();
+	  </script>
+	  <script src="${resURL}/plugin/aludratest/js/statusColors.js"></script>
+      
       
       <script type="text/javascript">
 jQuery(function() {
