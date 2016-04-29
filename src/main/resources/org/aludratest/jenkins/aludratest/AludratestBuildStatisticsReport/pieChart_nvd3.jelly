@@ -29,7 +29,7 @@
 	  <script type="text/javascript">
 	  	jQuery.noConflict();
 	  </script>
-	  <script type="text/javascript" src="${resURL}/plugin/aludratest/js/datatables.min.js"></script>
+	  <script type="text/javascript" src="${resURL}/plugin/aludratest/js/jquery.dataTables.min.js"></script>
      <script src="${resURL}/plugin/aludratest/js/statusColors.js"></script>
 	
 	<!-- this replaces the Array.prototype.every method with its original implementation, to replace Prototype.JS implementation,

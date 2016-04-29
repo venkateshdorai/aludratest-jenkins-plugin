@@ -2,7 +2,7 @@
 <j:jelly xmlns:j="jelly:core">
         <table id="test_cases_table" class="display" width="100%"></table>
         
-        <script type="text/javascript" src="${resURL}/plugin/aludratest/js/datatables.min.js"></script>
+        <script type="text/javascript" src="${resURL}/plugin/aludratest/js/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="${resURL}/plugin/aludratest/js/jquery-ui.min.js"></script>
         <script src="${resURL}/plugin/aludratest/js/testCaseExecutionChart_nvd3.js"></script>
         

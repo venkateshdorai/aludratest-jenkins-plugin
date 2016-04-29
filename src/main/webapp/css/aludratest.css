@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css");
-@import url("https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css");
-@import url("https://cdn.datatables.net/t/dt/dt-1.10.11,b-1.1.2,b-html5-1.1.2/datatables.min.css");
+@import url("font-awesome.min.css");
+@import url("jquery-ui.min.css");
+@import url("smoothness/theme.css");
+@import url("jquery.dataTables.min.css");
 @import url("nv.d3.min.css");
 
 .aludratest-center {
