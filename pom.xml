@@ -16,8 +16,6 @@
 
 	<properties>
 		<jenkins.version>1.650</jenkins.version>
-		<!-- not fully understood why the InjectedTest fails. But this is how we can exclude it. -->
-		<!-- <maven-hpi-plugin.disabledTestInjection>true</maven-hpi-plugin.disabledTestInjection> -->
 	</properties>
 
 	<name>AludraTest Jenkins Plugin</name>
@@ -57,6 +55,17 @@
 			<url>http://repo.jenkins-ci.org/public/</url>
 		</pluginRepository>
 	</pluginRepositories>
+	
+	<dependencies>
+		<!-- explicitly need this version, as previous versions cannot handle used jQuery code, and later versions
+		are not compatible with Jenkins Plugin Parent POM. -->
+		<dependency>
+			<groupId>net.sourceforge.htmlunit</groupId>
+			<artifactId>htmlunit</artifactId>
+			<version>2.20</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>

@@ -23,13 +23,13 @@ import java.util.Map;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
-import net.sf.json.JsonConfig;
-
 import org.aludratest.jenkins.aludratest.util.XPathUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
+import net.sf.json.JsonConfig;
 
 public class AludratestSuiteExecutionStatistics {
 
@@ -150,15 +150,17 @@ public class AludratestSuiteExecutionStatistics {
 
 		// count direct test cases
 		result.setNumberOfTests(XPathUtil.evalXPathAsInt(suiteNode, "count(" + tcPath + ")", factory));
-		result.setNumberOfFailedTests(XPathUtil.evalXPathAsInt(suiteNode, "count(" + tcPath + "[./status/text() != 'PASSED'])",
+		result.setNumberOfFailedTests(
+				XPathUtil.evalXPathAsInt(suiteNode, "count(" + tcPath + "[./status/text() != 'PASSED' and not(@ignored='true')])",
 				factory));
 		result.setNumberOfSuccessfulTests(XPathUtil.evalXPathAsInt(suiteNode,
-				"count(" + tcPath + "[./status/text() = 'PASSED'])", factory));
+				"count(" + tcPath + "[./status/text() = 'PASSED' and not(@ignored='true')])", factory));
 		result.setNumberOfIgnoredTests(XPathUtil.evalXPathAsInt(suiteNode, "count(" + tcPath + "[@ignored='true'])", factory));
 		result.setNumberOfIgnoredFailedTests(XPathUtil.evalXPathAsInt(suiteNode, "count(" + tcPath
-				+ "[@ignored='true'][./testStepGroups/testStepGroup[last()][./status/text() != 'PASSED']])", factory));
-		result.setNumberOfIgnoredSuccessfulTests(XPathUtil.evalXPathAsInt(suiteNode, "count(" + tcPath
-				+ "[@ignored='true'][./testStepGroups/testStepGroup[last()][./status/text() = 'PASSED']])", factory));
+				+ "[./status/text() != 'PASSED' and @ignored='true'])", factory));
+		result.setNumberOfIgnoredSuccessfulTests(XPathUtil.evalXPathAsInt(suiteNode,
+				"count(" + tcPath
+				+ "[./status/text() = 'PASSED' and @ignored='true'])", factory));
 
 		List<String> allStates = XPathUtil.evalXPathAsStringList(suiteNode, tcPath + "[not(@ignored)]/status", factory, false);
 

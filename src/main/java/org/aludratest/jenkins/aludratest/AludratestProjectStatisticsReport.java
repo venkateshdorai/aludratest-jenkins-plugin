@@ -318,6 +318,11 @@ public class AludratestProjectStatisticsReport {
 			if (!url.endsWith("/")) {
 				url += "/";
 			}
+			// if we are not an aggregated job, we have to prefix the log path with the job URL (dirty check)
+			if (!shortLogPath.startsWith("job/") && !shortLogPath.startsWith("/job/")) {
+				shortLogPath = build.getUrl() + shortLogPath;
+			}
+
 			url += shortLogPath;
 			if (!url.endsWith("/")) {
 				url += "/";
