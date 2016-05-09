@@ -206,6 +206,10 @@
 										<exclude>**/*.ico</exclude>
 									</excludes>
 								</resource>
+								<!-- also copy existing resources to use them in the HPL for testing -->
+								<resource>
+									<directory>src/main/webapp</directory>
+								</resource>
 							</resources>
 						</configuration>
 					</execution>
@@ -223,6 +227,8 @@
 							<filtering>false</filtering>
 						</webResource>
 					</webResources>
+					<!-- for testing -->
+					<warSourceDirectory>${project.build.directory}/external-resources</warSourceDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
