@@ -1,5 +1,7 @@
 # aludratest-jenkins-plugin
 
+[![Build Status](https://travis-ci.org/AludraTest/aludratest-jenkins-plugin.svg?branch=master)](https://travis-ci.org/AludraTest/aludratest-jenkins-plugin)
+
 Jenkins Plugin providing advanced statistics and charts for AludraTest executions.
 
 ## Description
