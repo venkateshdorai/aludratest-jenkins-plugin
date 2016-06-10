@@ -15,23 +15,6 @@
  */
 package org.aludratest.jenkins.aludratest;
 
-import hudson.AbortException;
-import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.model.AbstractDescribableImpl;
-import hudson.model.Action;
-import hudson.model.Item;
-import hudson.model.TaskListener;
-import hudson.model.AbstractProject;
-import hudson.model.Descriptor;
-import hudson.model.Run;
-import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.BuildStepMonitor;
-import hudson.tasks.Publisher;
-import hudson.tasks.Recorder;
-import hudson.util.ListBoxModel;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,14 +27,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.acegisecurity.AccessDeniedException;
+import org.apache.commons.io.FileUtils;
+import org.kohsuke.stapler.DataBoundConstructor;
+
+import hudson.AbortException;
+import hudson.Extension;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.model.AbstractDescribableImpl;
+import hudson.model.AbstractProject;
+import hudson.model.Action;
+import hudson.model.Descriptor;
+import hudson.model.Item;
+import hudson.model.Run;
+import hudson.model.TaskListener;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
+import hudson.util.ComboBoxModel;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
-
-import org.acegisecurity.AccessDeniedException;
-import org.apache.commons.io.FileUtils;
-import org.kohsuke.stapler.DataBoundConstructor;
 
 public class AludratestAggregateStatisticsPublisher extends Recorder implements SimpleBuildStep {
 
@@ -133,9 +132,9 @@ public class AludratestAggregateStatisticsPublisher extends Recorder implements 
 				return "";
 			}
 
-			public ListBoxModel doFillProjectNameItems() {
-				ListBoxModel model = new ListBoxModel();
-
+			public ComboBoxModel doFillProjectNameItems() {
+				ComboBoxModel model = new ComboBoxModel();
+				
 				Jenkins jenkins = Jenkins.getInstance();
 				if (jenkins != null) {
 					for (String jn : jenkins.getJobNames()) {
