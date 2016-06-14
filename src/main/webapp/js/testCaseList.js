@@ -21,6 +21,18 @@ var allChangeDescriptions = [
 	"Not present in previous build"
 ];
 
+var failureChangeDescription = "{0} before, now {1}";
+
+// provide a simple format function
+if (!String.format) {
+	String.format = function(format) {
+		var args = Array.prototype.slice.call(arguments, 1);
+		return format.replace(/{(\d+)}/g, function(match, number) {
+			return typeof args[number] != 'undefined' ? args[number] : match;
+		});
+	};
+}
+
 function buildTestCaseTable(compare) {
 	compare = compare !== '';
 
@@ -66,7 +78,13 @@ function buildTestCaseTable(compare) {
 				}
 				if (value.success == 0) {
 					if (compareObj.success == 0) {
-						changeDescription = allChangeDescriptions[2];
+						// check if error state has changed
+						if (value.status !== compareObj.status) {
+							changeDescription = String.format(failureChangeDescription, compareObj.status, value.status);
+						}
+						else {
+							changeDescription = allChangeDescriptions[2];
+						}
 					}
 					else {
 						changeDescription = allChangeDescriptions[3];
