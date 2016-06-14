@@ -64,7 +64,7 @@ public class AludratestBuildStatisticsReport {
 		sb.append(generateJsData(build, "current"));
 
 		if (compareBuildId != null && !"".equals(compareBuildId)) {
-			Run<?, ?> compareBuild = build.getParent().getBuild(compareBuildId);
+			Run<?, ?> compareBuild = getRunByCompareBuildId(compareBuildId);
 			if (compareBuild != null) {
 				sb.append(generateJsData(compareBuild, "compare"));
 			}
@@ -116,11 +116,27 @@ public class AludratestBuildStatisticsReport {
 		return result;
 	}
 
-	public String getBuildNumber(String buildId) {
+	private Run<?, ?> getRunByCompareBuildId(String buildId) {
 		if (buildId == null) {
 			return null;
 		}
-		Run<?, ?> run = build.getParent().getBuild(buildId);
+
+		if (buildId.matches("-[0-9]+")) {
+			int buildIndex = Integer.parseInt(buildId) * -1 - 1;
+			List<String> buildIds = getPreviousBuildIds();
+			if (buildIds.size() > buildIndex) {
+				return build.getParent().getBuild(buildIds.get(buildIndex));
+			}
+		}
+		else {
+			return build.getParent().getBuild(buildId);
+		}
+
+		return null;
+	}
+
+	public String getBuildNumber(String buildId) {
+		Run<?, ?> run = getRunByCompareBuildId(buildId);
 		return run == null ? "???" : String.valueOf(run.getNumber());
 	}
 
