@@ -5,7 +5,7 @@
 
 	<groupId>org.aludratest.jenkins</groupId>
 	<artifactId>aludratest</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.1</version>
 	<packaging>hpi</packaging>
 
 	<parent>
