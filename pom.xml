@@ -5,18 +5,18 @@
 
 	<groupId>org.aludratest.jenkins</groupId>
 	<artifactId>aludratest</artifactId>
-	<version>1.1</version>
+	<version>2.0-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>2.5</version>
+		<version>2.25</version>
 		<relativePath />
 	</parent>
 	
 	<properties>
-		<jenkins.version>1.650</jenkins.version>
+		<jenkins.version>2.52</jenkins.version>
 	</properties>
 
 	<name>AludraTest Jenkins Plugin</name>
