@@ -15,20 +15,6 @@
  */
 package org.aludratest.jenkins.aludratest;
 
-import hudson.AbortException;
-import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.model.Action;
-import hudson.model.TaskListener;
-import hudson.model.AbstractProject;
-import hudson.model.Run;
-import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.BuildStepMonitor;
-import hudson.tasks.Publisher;
-import hudson.tasks.Recorder;
-import hudson.util.FormValidation;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,16 +29,29 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import jenkins.model.Jenkins;
-import jenkins.tasks.SimpleBuildStep;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
-
 import org.apache.commons.io.IOUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
+import hudson.AbortException;
+import hudson.Extension;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.model.AbstractProject;
+import hudson.model.Action;
+import hudson.model.Run;
+import hudson.model.TaskListener;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
+import hudson.util.FormValidation;
+import jenkins.model.Jenkins;
+import jenkins.tasks.SimpleBuildStep;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 
 public class AludratestStatisticsPublisher extends Recorder implements SimpleBuildStep {
 
@@ -110,7 +109,7 @@ public class AludratestStatisticsPublisher extends Recorder implements SimpleBui
 	@Override
 	public AludratestPublisherDescriptor getDescriptor() {
 		Jenkins jenkins = Jenkins.getInstance();
-		return jenkins == null ? null : jenkins.getDescriptorByType(AludratestPublisherDescriptor.class);
+		return jenkins.getDescriptorByType(AludratestPublisherDescriptor.class);
 	}
 
 	@Override

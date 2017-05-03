@@ -52,10 +52,6 @@ public class AludratestBuildStatisticsReport {
 
 	public String getResURL() {
 		Jenkins jenkins = Jenkins.getInstance();
-		if (jenkins == null) {
-			return null;
-		}
-
 		return jenkins.getRootUrl() + Functions.getResourcePath();
 	}
 

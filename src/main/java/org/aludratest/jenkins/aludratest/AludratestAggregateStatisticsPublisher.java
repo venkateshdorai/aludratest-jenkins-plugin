@@ -341,9 +341,6 @@ public class AludratestAggregateStatisticsPublisher extends Recorder implements 
 
 	private static boolean isApplicableForAggregation(String jobName) {
 		Jenkins jenkins = Jenkins.getInstance();
-		if (jenkins == null) {
-			return false;
-		}
 		Item item = jenkins.getItem(jobName);
 		if (!(item instanceof AbstractProject<?, ?>)) {
 			return false;

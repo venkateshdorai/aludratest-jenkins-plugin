@@ -57,10 +57,6 @@ public class AludratestProjectStatisticsReport {
 
 	public String getResURL() {
 		Jenkins jenkins = Jenkins.getInstance();
-		if (jenkins == null) {
-			return null;
-		}
-
 		return jenkins.getRootUrl() + Functions.getResourcePath();
 	}
 
@@ -310,10 +306,6 @@ public class AludratestProjectStatisticsReport {
 			}
 
 			Jenkins jenkins = Jenkins.getInstance();
-			if (jenkins == null) {
-				return null;
-			}
-
 			String url = jenkins.getRootUrl();
 			if (!url.endsWith("/")) {
 				url += "/";
