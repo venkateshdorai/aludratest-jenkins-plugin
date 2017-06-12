@@ -149,34 +149,38 @@ public class AludratestProjectStatisticsReport {
 		// check if range (or at least start) is given
 		int startBuildNo = -1;
 		int endBuildNo = -1;
-		if (fromBuildNumber != null && !"".equals(fromBuildNumber)) {
-			try {
-				startBuildNo = Integer.parseInt(fromBuildNumber);
-				if (toBuildNumber != null && !"".equals(toBuildNumber)) {
-					endBuildNo = Integer.parseInt(toBuildNumber);
-				}
 
-				if (startBuildNo < 0) {
-					// relative mode: Find last N builds
-					Run<?, ?> build = project.getLastBuild();
-					int buildCount = 0;
-					int targetBuildCount = startBuildNo * -1;
-					while (build != null && buildCount < targetBuildCount) {
-						if (new File(build.getRootDir(), AludratestStatisticsPublisher.STATISTICS_FILE_NAME).isFile()) {
-							buildCount++;
-						}
-						startBuildNo = build.getNumber();
-						build = build.getPreviousBuild();
+		// auto-protection: When too many builds, reduce to last 15 (can be overridden via fromBuild parameter)
+		if ((fromBuildNumber == null || "".equals(fromBuildNumber)) && project.getBuildsAsMap().size() > 50) {
+			fromBuildNumber = "-15";
+		}
+
+		try {
+			startBuildNo = Integer.parseInt(fromBuildNumber);
+			if (toBuildNumber != null && !"".equals(toBuildNumber)) {
+				endBuildNo = Integer.parseInt(toBuildNumber);
+			}
+
+			if (startBuildNo < 0) {
+				// relative mode: Find last N builds
+				Run<?, ?> build = project.getLastBuild();
+				int buildCount = 0;
+				int targetBuildCount = startBuildNo * -1;
+				while (build != null && buildCount < targetBuildCount) {
+					if (new File(build.getRootDir(), AludratestStatisticsPublisher.STATISTICS_FILE_NAME).isFile()) {
+						buildCount++;
 					}
-
-					// no toBuild supported then
-					endBuildNo = -1;
+					startBuildNo = build.getNumber();
+					build = build.getPreviousBuild();
 				}
 
+				// no toBuild supported then
+				endBuildNo = -1;
 			}
-			catch (NumberFormatException e) {
-				startBuildNo = endBuildNo = -1;
-			}
+
+		}
+		catch (NumberFormatException e) {
+			startBuildNo = endBuildNo = -1;
 		}
 
 		// iterate over all builds having a stats file
