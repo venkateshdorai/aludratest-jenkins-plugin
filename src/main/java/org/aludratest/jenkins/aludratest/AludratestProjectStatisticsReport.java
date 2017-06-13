@@ -45,8 +45,6 @@ public class AludratestProjectStatisticsReport {
 
 	private AbstractProject<?, ?> project;
 
-	private ProjectStatistics cachedStatistics;
-
 	public AludratestProjectStatisticsReport(AbstractProject<?, ?> project) {
 		this.project = project;
 	}
@@ -61,7 +59,7 @@ public class AludratestProjectStatisticsReport {
 	}
 
 	public String getDataVars(String fromBuildNumber, String toBuildNumber) {
-		cacheStatistics(fromBuildNumber, toBuildNumber);
+		ProjectStatistics cachedStatistics = cacheStatistics(fromBuildNumber, toBuildNumber);
 
 		StringBuilder sbVars = new StringBuilder();
 
@@ -109,12 +107,12 @@ public class AludratestProjectStatisticsReport {
 	}
 
 	public String doJson(@QueryParameter(required = false) String fromBuild, @QueryParameter(required = false) String toBuild) {
-		cacheStatistics(fromBuild, toBuild);
+		ProjectStatistics cachedStatistics = cacheStatistics(fromBuild, toBuild);
 		return JSONSerializer.toJSON(cachedStatistics).toString();
 	}
 
 	public String doCsv(@QueryParameter(required = false) String fromBuild, @QueryParameter(required = false) String toBuild) {
-		cacheStatistics(fromBuild, toBuild);
+		ProjectStatistics cachedStatistics = cacheStatistics(fromBuild, toBuild);
 
 		StringBuilder sb = new StringBuilder();
 
@@ -143,8 +141,8 @@ public class AludratestProjectStatisticsReport {
 		return sb.toString();
 	}
 
-	private synchronized void cacheStatistics(String fromBuildNumber, String toBuildNumber) {
-		cachedStatistics = new ProjectStatistics();
+	private synchronized ProjectStatistics cacheStatistics(String fromBuildNumber, String toBuildNumber) {
+		ProjectStatistics cachedStatistics = new ProjectStatistics();
 
 		// check if range (or at least start) is given
 		int startBuildNo = -1;
@@ -189,7 +187,7 @@ public class AludratestProjectStatisticsReport {
 		Run<?, ?> build = startBuildNo == -1 ? project.getFirstBuild() : project.getBuildByNumber(startBuildNo);
 		if (build == null) {
 			// no fallback here, no caching - empty results
-			return;
+			return cachedStatistics;
 		}
 
 		// optimized, lengthy code to parallelize String -> JSON parsing
@@ -230,7 +228,7 @@ public class AludratestProjectStatisticsReport {
 				}
 			}
 			catch (InterruptedException e) {
-				return;
+				return cachedStatistics;
 			}
 		}
 
@@ -246,6 +244,8 @@ public class AludratestProjectStatisticsReport {
 			}
 			cachedStatistics.addBuildData(buildNumber.intValue(), dn, parsedObjects.get(buildNumber));
 		}
+
+		return cachedStatistics;
 	}
 
 	public static class NavigationBean {
