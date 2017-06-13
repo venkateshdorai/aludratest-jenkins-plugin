@@ -155,7 +155,7 @@ public class AludratestProjectStatisticsReport {
 			fromBuildNumber = "-15";
 		}
 
-		if (fromBuildNumber != null && "".equals(fromBuildNumber)) {
+		if (fromBuildNumber != null && !"".equals(fromBuildNumber)) {
 			try {
 				startBuildNo = Integer.parseInt(fromBuildNumber);
 				if (toBuildNumber != null && !"".equals(toBuildNumber)) {
