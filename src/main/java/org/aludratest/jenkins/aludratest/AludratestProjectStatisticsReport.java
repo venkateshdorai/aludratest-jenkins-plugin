@@ -33,7 +33,7 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import hudson.Functions;
-import hudson.model.AbstractProject;
+import hudson.model.Job;
 import hudson.model.Run;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
@@ -43,13 +43,13 @@ import net.sf.json.util.PropertyFilter;
 
 public class AludratestProjectStatisticsReport {
 
-	private AbstractProject<?, ?> project;
+	private Job<?, ?> project;
 
-	public AludratestProjectStatisticsReport(AbstractProject<?, ?> project) {
+	public AludratestProjectStatisticsReport(Job<?, ?> project) {
 		this.project = project;
 	}
 
-	public AbstractProject<?, ?> getProject() {
+	public Job<?, ?> getProject() {
 		return project;
 	}
 
@@ -250,9 +250,9 @@ public class AludratestProjectStatisticsReport {
 
 	public static class NavigationBean {
 
-		private AbstractProject<?, ?> project;
+		private Job<?, ?> project;
 
-		public NavigationBean(AbstractProject<?, ?> project) {
+		public NavigationBean(Job<?, ?> project) {
 			this.project = project;
 		}
 

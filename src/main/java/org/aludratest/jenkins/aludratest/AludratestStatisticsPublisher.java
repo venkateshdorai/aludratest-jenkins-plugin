@@ -41,6 +41,7 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
@@ -186,6 +187,12 @@ public class AludratestStatisticsPublisher extends Recorder implements SimpleBui
 		}
 
 		run.addAction(new AludratestBuildStatisticsAction(run));
+		
+		Job<?, ?> job = run.getParent();
+		if (job.getActions(AludratestStatisticsAction.class).isEmpty()) {
+			job.addAction(new AludratestStatisticsAction(job));
+		}
+		
 	}
 
 }

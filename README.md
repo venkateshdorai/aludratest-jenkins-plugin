@@ -111,6 +111,12 @@ Now, after a new execution of the job, the execution statistics will be gathered
 
 ![image](https://cloud.githubusercontent.com/assets/8896947/14716700/7c236626-07ee-11e6-9b23-7e3fb2095048.png)
 
+## Jenkins Pipeline
+
+If you are using Jenkins Pipeline together with a `Jenkinsfile`, you can invoke the "Gather AludraTest Statistics" action by script:
+
+    step([$class: 'AludratestStatisticsPublisher', htmlLogPath: 'artifact/target/result/html', resultXmlFile: 'target/result/result.xml'])
+    
 ## Aggregating multiple projects
 
 -Documentation coming soon-

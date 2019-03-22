@@ -348,14 +348,8 @@ public class AludratestAggregateStatisticsPublisher extends Recorder implements 
 
 		AbstractProject<?, ?> project = (AbstractProject<?, ?>) item;
 
-		// job must have the AludraTest Publisher configured
-		for (Publisher publisher : project.getPublishersList()) {
-			if (publisher instanceof AludratestStatisticsPublisher) {
-				return true;
-			}
-		}
-
-		return false;
+		// job must have the AludraTest Statistics Action enabled
+		return !project.getActions(AludratestStatisticsAction.class).isEmpty();
 	}
 
 }

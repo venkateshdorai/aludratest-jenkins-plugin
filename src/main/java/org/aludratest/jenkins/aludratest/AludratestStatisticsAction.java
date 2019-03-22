@@ -17,15 +17,15 @@ package org.aludratest.jenkins.aludratest;
 
 import org.kohsuke.stapler.StaplerProxy;
 
-import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.Job;
 import jenkins.model.Jenkins;
 
 public class AludratestStatisticsAction implements Action, StaplerProxy {
 
-	private AbstractProject<?, ?> project;
+	private Job<?, ?> project;
 
-	public AludratestStatisticsAction(AbstractProject<?, ?> project) {
+	public AludratestStatisticsAction(Job<?, ?> project) {
 		this.project = project;
 	}
 
