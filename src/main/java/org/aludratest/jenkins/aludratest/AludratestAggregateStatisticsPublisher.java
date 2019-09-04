@@ -17,6 +17,7 @@ package org.aludratest.jenkins.aludratest;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -81,7 +82,12 @@ public class AludratestAggregateStatisticsPublisher extends Recorder implements 
 
 	}
 
-	public static class ProjectEntry extends AbstractDescribableImpl<ProjectEntry> {
+	public static class ProjectEntry extends AbstractDescribableImpl<ProjectEntry> implements Serializable {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		// the project of which to get the statistics
 		private String projectName;
