@@ -53,7 +53,12 @@ import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
-public class AludratestAggregateStatisticsPublisher extends Recorder implements SimpleBuildStep {
+public class AludratestAggregateStatisticsPublisher extends Recorder implements SimpleBuildStep, Serializable {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
 	private List<ProjectEntry> projectEntries = new ArrayList<ProjectEntry>();
 
