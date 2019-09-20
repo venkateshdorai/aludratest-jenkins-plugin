@@ -111,6 +111,8 @@
 	        return chart;
 		}
 		
+		
+		
 		function generatePieChartDataTable(compareStatistics) {
 			var tableData = new Array();
 			
@@ -124,11 +126,44 @@
       			return "-";
 			}
 			
+			/*
 			function buildDataTableLine(key, currentValue, compareValue) {
 	        	var line = [ key, currentValue ];
 	        	if (typeof(compareValue) !== 'undefined') {
 	        		var absChange = currentValue - compareValue;
 	        		line[2] = buildChangeDescriptionSpan(key, absChange);
+	        	}
+	        	return line;
+			}*/
+			
+			
+			function getTotalCount(statistics)
+			{
+			var totalCount =0;
+			   jQuery.each(statistics.numberOfTestsByStatus, function(key, value) {
+			   if(totalCount == 'undefined')
+			   	totalCount = 0;
+	           totalCount = totalCount+value;
+	        });
+	         if (statistics.numberOfIgnoredSuccessfulTests > 0) {
+	            totalCount = totalCount + statistics.numberOfIgnoredSuccessfulTests;
+	        }
+	        if (statistics.numberOfIgnoredFailedTests > 0) {
+	           totalCount = totalCount +statistics.numberOfIgnoredFailedTests;
+	        }
+	        return totalCount;
+			}
+			
+			
+			
+			function buildDataTableLine(key, currentValue, compareValue,perstr) {
+				var convertInt = parseFloat(perstr);
+				var str = convertInt+"%";
+	        	var line = [ key, currentValue ,str];
+	        	if (typeof(compareValue) !== 'undefined') {
+	        		var absChange = currentValue - compareValue;
+	        		//line[2] = buildChangeDescriptionSpan(key, absChange);
+	        		line[3] = buildChangeDescriptionSpan(key, absChange);
 	        	}
 	        	return line;
 			}
@@ -141,11 +176,16 @@
 			}
 			
 	        jQuery.each(currentStatistics.numberOfTestsByStatus, function(key, value) {
+	        	var totalCount =getTotalCount(currentStatistics);
+	            if(totalCount == 'undefined')
+			   		totalCount = 0;
+	            var percent = totalCount == 0 ? 0 : (value / totalCount) * 100; 
+        		var perstr =  percent.toFixed(2) ; 
 	        	if (typeof(compareStatistics) !== 'undefined') {
-	        		tableData.push(buildDataTableLine(key, value, valueOrZero(compareStatistics.numberOfTestsByStatus[key])));
+	        		tableData.push(buildDataTableLine(key, value, valueOrZero(compareStatistics.numberOfTestsByStatus[key]),perstr));
 	        	}
 	        	else {
-	        		tableData.push(buildDataTableLine(key, value));
+	        		tableData.push(buildDataTableLine(key, value,'undefined',perstr));
 	        	}
 	        });
 	        
@@ -154,26 +194,41 @@
 	        });
 	        
 	        if (currentStatistics.numberOfIgnoredSuccessfulTests > 0) {
+	         	 var totalCount =getTotalCount(currentStatistics);
+	            if(totalCount == 'undefined')
+			   		totalCount = 0;
+	            var percent = totalCount == 0 ? 0 : (value / totalCount) * 100; 
+        		var perstr =  percent.toFixed(2) ; 
 	        	if (typeof(compareStatistics) !== 'undefined') {
-	        		tableData.push(buildDataTableLine("IGNORED_PASSED", currentStatistics.numberOfIgnoredSuccessfulTests, valueOrZero(compareStatistics.numberOfIgnoredSuccessfulTests)));
+	        		tableData.push(
+	        			buildDataTableLine("IGNORED_PASSED", currentStatistics.numberOfIgnoredSuccessfulTests, valueOrZero(compareStatistics.numberOfIgnoredSuccessfulTests),perstr)
+	        			);
 	        	}
 	        	else {
-	        		tableData.push(buildDataTableLine("IGNORED_PASSED", currentStatistics.numberOfIgnoredSuccessfulTests));
+	        		tableData.push(buildDataTableLine("IGNORED_PASSED", currentStatistics.numberOfIgnoredSuccessfulTests,'undefined',perstr));
 	        	}
 	        }
 	        
 	        if (currentStatistics.numberOfIgnoredFailedTests > 0) {
+	         var totalCount =getTotalCount(currentStatistics);
+	            if(totalCount == 'undefined')
+			   		totalCount = 0;
+	            var percent = totalCount == 0 ? 0 : (value / totalCount) * 100; 
+        		var perstr =  percent.toFixed(2);
 	        	if (typeof(compareStatistics) !== 'undefined') {
-	        		tableData.push(buildDataTableLine("IGNORED_FAILED", currentStatistics.numberOfIgnoredFailedTests, valueOrZero(compareStatistics.numberOfIgnoredFailedTests)));
+	        		tableData.push(
+	        		buildDataTableLine("IGNORED_FAILED", currentStatistics.numberOfIgnoredFailedTests, valueOrZero(compareStatistics.numberOfIgnoredFailedTests),perstr)
+	        		);
 	        	}
 	        	else {
-	        		tableData.push(buildDataTableLine("IGNORED_FAILED", currentStatistics.numberOfIgnoredFailedTests));
+	        		tableData.push(buildDataTableLine("IGNORED_FAILED", currentStatistics.numberOfIgnoredFailedTests,'undefined',perstr));
 	        	}
 	        }
 	        
 	        var columns = [
 	        	{ title: "Status", className: "aludratest-center" },
-	        	{ title: "# of test cases", className: "aludratest-center" }
+	        	{ title: "# of test cases", className: "aludratest-center" },
+	        	{ title: "% of test cases", className: "aludratest-center" }
 	        ];
 	        
 	        if (typeof(compareStatistics) !== 'undefined') {
